@@ -2,201 +2,193 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Play, Zap, Shield, Cpu, Sparkles } from "lucide-react"
-import { motion } from "framer-motion"
-import { Particles } from "@/components/ui/particles"
-import { Aurora } from "@/components/ui/aurora"
-import { AnimatedCounter } from "@/components/ui/animated-counter"
-import { GlowingCard } from "@/components/ui/glowing-card"
+import { ArrowRight, Play, Zap, Shield, Sparkles, AudioWaveform, Headphones, Disc, Terminal, Music } from "lucide-react"
+import { useRef } from "react"
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    },
-  },
-}
+gsap.registerPlugin(useGSAP)
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
-    },
-  },
-}
+const stats = [
+  { icon: AudioWaveform, value: "< 5ms",  label: "Audio Hashing",   color: "text-primary",  bg: "bg-primary/8",  border: "border-primary/15" },
+  { icon: Shield,        value: "$0.10",  label: "Per Registration", color: "text-accent",   bg: "bg-accent/8",   border: "border-accent/15" },
+  { icon: Disc,          value: "100%",   label: "Immutable Tracks", color: "text-success",  bg: "bg-success/8",  border: "border-success/15" },
+]
+
+import Image from "next/image"
 
 export function HeroSection() {
+  const container = useRef<HTMLElement>(null)
+  
+  useGSAP(() => {
+    // Smooth GSAP Entrance
+    const tl = gsap.timeline()
+    tl.fromTo(
+      ".gsap-item",
+      { opacity: 0, y: 30, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 1, stagger: 0.15, ease: "power4.out", delay: 0.1 }
+    )
+    
+    // Floating animation
+    gsap.to(".card-sdk", {
+      y: -10,
+      duration: 2.5,
+      stagger: { each: 0.2, from: "center" },
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    })
+
+    // Scroll dot
+    gsap.to(".gsap-scroll-dot", {
+      y: 12,
+      duration: 1.5,
+      repeat: -1,
+      yoyo: true,
+      ease: "power2.inOut"
+    })
+    
+    gsap.fromTo(".gsap-scroll-indicator", { opacity: 0 }, { opacity: 1, duration: 1, delay: 1.5 })
+  }, { scope: container })
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 grid-bg opacity-30" />
-      <Aurora />
-      <Particles
-        className="absolute inset-0"
-        quantity={80}
-        staticity={40}
-        color="#22d3ee"
-        ease={80}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
+    <section
+      id="hero"
+      ref={container}
+      className="relative min-h-screen flex items-center justify-center pt-28 pb-16 overflow-hidden bg-background"
+    >
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/fondo_portada.png"
+          alt="Nova Background"
+          fill
+          priority
+          className="object-cover opacity-[0.08]"
+          quality={100}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20"
-      >
-        <div className="text-center">
-          {/* Badge */}
-          <motion.div variants={itemVariants} className="mb-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2 backdrop-blur-sm">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
-              </span>
-              <span className="text-sm text-primary font-medium tracking-wide">
-                Stellar Hacks 2026 Hackathon
-              </span>
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
-          </motion.div>
-
-          {/* Main heading */}
-          <motion.h1
-            variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
-          >
-            <span className="text-foreground">The First Autonomous</span>
-            <br />
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-              AI Payment Agent
+      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+        {/* Top badge */}
+        <div className="mb-8 gsap-item opacity-0">
+          <span className="badge-sdk">
+            <span className="dot-ping">
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>
-            <br />
-            <span className="text-foreground">on Stellar</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            variants={itemVariants}
-            className="mt-8 text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
-          >
-            AI agents that reason, pay, and register intellectual property autonomously.
-            No credit cards. No subscriptions. Just machine-to-machine micropayments
-            powered by the <span className="text-primary font-medium">x402 protocol</span>.
-          </motion.p>
-
-          {/* CTA buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Button
-              asChild
-              size="lg"
-              className="glow-primary animate-pulse-glow px-8 h-12 text-base font-medium"
-            >
-              <Link href="/simulation" className="flex items-center gap-2">
-                <Play className="h-5 w-5" />
-                Watch Live Demo
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="px-8 h-12 text-base font-medium border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all"
-            >
-              <Link href="#how-it-works" className="flex items-center gap-2">
-                Learn More
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto"
-          >
-            <GlowingCard
-              className="p-8"
-              containerClassName="transform hover:scale-105 transition-transform duration-300"
-              glowColor="rgba(34, 211, 238, 0.2)"
-            >
-              <div className="flex flex-col items-center">
-                <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 mb-4">
-                  <Zap className="h-6 w-6 text-primary" />
-                </div>
-                <span className="text-3xl font-bold text-foreground">
-                  <AnimatedCounter value={5} prefix="<" suffix="ms" />
-                </span>
-                <span className="text-sm text-muted-foreground mt-1">Payment Latency</span>
-              </div>
-            </GlowingCard>
-
-            <GlowingCard
-              className="p-8"
-              containerClassName="transform hover:scale-105 transition-transform duration-300"
-              glowColor="rgba(139, 92, 246, 0.2)"
-            >
-              <div className="flex flex-col items-center">
-                <div className="p-3 rounded-xl bg-accent/10 border border-accent/20 mb-4">
-                  <Shield className="h-6 w-6 text-accent" />
-                </div>
-                <span className="text-3xl font-bold text-foreground">
-                  <AnimatedCounter value={0.10} prefix="$" />
-                </span>
-                <span className="text-sm text-muted-foreground mt-1">Per Registration</span>
-              </div>
-            </GlowingCard>
-
-            <GlowingCard
-              className="p-8"
-              containerClassName="transform hover:scale-105 transition-transform duration-300"
-              glowColor="rgba(34, 197, 94, 0.2)"
-            >
-              <div className="flex flex-col items-center">
-                <div className="p-3 rounded-xl bg-success/10 border border-success/20 mb-4">
-                  <Cpu className="h-6 w-6 text-success" />
-                </div>
-                <span className="text-3xl font-bold text-foreground">
-                  <AnimatedCounter value={100} suffix="%" />
-                </span>
-                <span className="text-sm text-muted-foreground mt-1">Autonomous</span>
-              </div>
-            </GlowingCard>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-muted-foreground uppercase tracking-widest">
-            Scroll to explore
+            <Music className="h-3 w-3" />
+            Music IP Agent Track
           </span>
-          <div className="w-6 h-10 rounded-full border-2 border-primary/30 flex items-start justify-center p-1.5">
-            <motion.div
-              animate={{ y: [0, 14, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-primary"
-            />
+        </div>
+
+        {/* Heading */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-bold tracking-tight text-balance leading-[1.08] gsap-item opacity-0">
+          <span className="text-foreground">The SDK for</span>
+          <br />
+          <span className="gradient-text animate-gradient">Autonomous Music IPs</span>
+          <br />
+          <span className="text-foreground">on Stellar</span>
+        </h1>
+
+        {/* Subtitle */}
+        <p className="mt-7 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed gsap-item opacity-0">
+          One TypeScript SDK gives AI agents the ability to register music stems and albums on-chain —
+          automatically handling <span className="font-medium text-foreground">HTTP 402 paywalls</span>,{" "}
+          <span className="font-medium text-foreground">Ed25519 signing</span>, and{" "}
+          <span className="font-medium text-foreground">Soroban smart contracts</span>.
+        </p>
+
+        {/* Install snippet */}
+        <div className="mt-10 flex justify-center gsap-item opacity-0">
+          <div className="inline-flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3 shadow-sm hover:shadow-md transition-shadow group">
+            <Terminal className="h-4 w-4 text-muted-foreground shrink-0" />
+            <code className="text-sm font-mono text-foreground">
+              npm install{" "}
+              <a href="https://www.npmjs.com/package/@nova-registry/sdk-ts" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">
+                @nova-registry/sdk-ts
+              </a>
+            </code>
+            <button
+              onClick={() => navigator.clipboard.writeText("npm install @nova-registry/sdk-ts")}
+              className="ml-2 text-xs text-muted-foreground hover:text-primary transition-colors font-medium opacity-0 group-hover:opacity-100"
+            >
+              Copy
+            </button>
           </div>
         </div>
-      </motion.div>
+
+        {/* CTAs */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 gsap-item opacity-0">
+          <Button
+            asChild
+            size="lg"
+            className="btn-primary px-8 h-11 text-sm font-semibold rounded-lg animate-pulse-glow"
+          >
+            <Link href="/simulation" className="flex items-center gap-2">
+              <Headphones className="h-4 w-4" />
+              Listen & Verify Demo
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="btn-ghost px-8 h-11 text-sm font-semibold rounded-lg"
+          >
+            <Link href="#sdk" className="flex items-center gap-2">
+              Read the Docs
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Trust signals */}
+        <div className="mt-8 flex items-center justify-center gap-6 text-xs text-muted-foreground gsap-item opacity-0">
+          <span className="flex items-center gap-1.5">
+            <AudioWaveform className="h-3.5 w-3.5 text-primary/60" />
+            WAV & MP3 Supported
+          </span>
+          <span className="hidden sm:flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-warning/80" />
+            Claude AI Integration
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Shield className="h-3.5 w-3.5 text-success/70" />
+            On-Chain Rights
+          </span>
+        </div>
+
+        {/* Stats row */}
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto gsap-item opacity-0">
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className={`card-sdk rounded-2xl p-6 flex flex-col items-center gap-3 ${s.bg} border ${s.border}`}
+            >
+              <div className={`p-2.5 rounded-xl bg-white/70 border border-white shadow-sm`}>
+                <s.icon className={`h-5 w-5 ${s.color}`} />
+              </div>
+              <div className="text-center">
+                <div className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.value}</div>
+                <div className="text-xs text-muted-foreground mt-0.5 font-medium">{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div
+        className="gsap-scroll-indicator opacity-0 absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
+      >
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Scroll</span>
+        <div className="w-5 h-9 rounded-full border border-border/70 flex items-start justify-center p-1.5">
+          <div
+            className="gsap-scroll-dot w-1 h-1 rounded-full bg-primary"
+          />
+        </div>
+      </div>
     </section>
   )
 }
